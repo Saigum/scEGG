@@ -1,8 +1,6 @@
 import numpy as np
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score, v_measure_score
 from sklearn import metrics
-from munkres import Munkres
-# from sklearn.utils.linear_assignment_ import linear_assignment
 from scipy.optimize import linear_sum_assignment
 
 def calculate_cost_matrix(C, n_clusters):
@@ -30,7 +28,8 @@ def get_y_preds(y_true, cluster_assignments, n_clusters):
     confusion_matrix = metrics.confusion_matrix(y_true, cluster_assignments, labels=None)
     # compute accuracy based on optimal 1:1 assignment of clusters to labels
     cost_matrix = calculate_cost_matrix(confusion_matrix, n_clusters)
-    indices = Munkres().compute(cost_matrix)
+    row_ind, col_ind = linear_sum_assignment(cost_matrix)
+    indices = list(zip(row_ind.tolist(), col_ind.tolist()))
     kmeans_to_true_cluster_labels = get_cluster_labels_from_indices(indices)
 
     if np.min(cluster_assignments)!=0:

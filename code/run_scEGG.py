@@ -35,10 +35,7 @@ if args.dataset_str == "Bjorklund":
     seed = 1
 
 os.environ['PYTHONHASHSEED'] = str(seed)
-os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
-torch.cuda.manual_seed(seed)
 torch.manual_seed(seed)
-torch.cuda.manual_seed_all(seed)
 np.random.seed(seed)
 random.seed(seed)
 torch.backends.cudnn.benchmark = False
@@ -60,7 +57,7 @@ model_path = f'../logs/model_{args.dataset_str}.h5'
 A, X, cells, genes = load_data(data_path, args.dataset_str, args.is_NE, args.n_clusters, args.k_neigh)
 X_dim = X.shape[1]
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 X_tensor = torch.tensor(X, dtype=torch.float).to(device)
 A_tensor = torch.tensor(A, dtype=torch.float).to(device)
 edge_index = (A_tensor != 0).nonzero(as_tuple=False).t().contiguous()

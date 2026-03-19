@@ -1,6 +1,9 @@
 
 # scEGG: Exogenous Gene-guided Single-Cell Deep Clustering Framework
 
+![Franework](https://github.com/DayuHuu/scEGA/blob/master/scEGG_framework.png)
+**Description:**
+
 [![Python](https://img.shields.io/badge/Python-3.7.0-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.13.1-orange.svg)](https://pytorch.org/)
 [![Journal](https://img.shields.io/badge/Briefings_in_Bioinformatics-bbae483-darkred)](https://academic.oup.com/bib)
@@ -75,6 +78,10 @@ To run scEGG on the **Bjorklund** dataset, you must first generate the correspon
 ### 1\. Configuration
 
 The model parameters can be configured via command-line arguments. Key arguments (e.g., dataset name, number of clusters) are defined in the parser:
+# Add other arguments as needed...
+```
+
+**Implement:**
 
 ```python
 # Example configuration
@@ -91,40 +98,74 @@ To run the scEGG model with the default configuration:
 python run_scEGG.py
 ```
 
------
+## New method: AMVF
 
-## 📧 Contact
+I added an improved clustering method in `code/run_amvf.py` called **Adaptive Multi-View Fusion (AMVF)**.
 
-If you have any questions about the code or the paper, please feel free to contact:
+- It combines an expression view, a sparse binary-program view, a TF-IDF rarity view, and an optional gene-embedding view.
+- It uses a stronger stacked multi-view latent as the default representation, with only light confidence-based calibration.
+- It runs with standard `numpy`/`pandas`/`scikit-learn` dependencies.
 
-**Dayu Hu**
-Email: [hudy@bmie.neu.edu.cn](mailto:hudy@bmie.neu.edu.cn)
+Example:
 
------
-
-
-## 📝 Citation
-
-If you find **scEGG** useful for your research, please consider citing our paper:
-
-**Text:**
-
-> Hu, D., Guan, R., Liang, K., Yu, H., Quan, H., Zhao, Y., Liu, X., & He, K. (2024). scEGG: an exogenous gene-guided clustering method for single-cell transcriptomic data. *Briefings in Bioinformatics*, 25(6), bbae483. Oxford University Press.
-
-**BibTeX:**
-
-```bibtex
-@article{scEGG,
-  title={scEGG: an exogenous gene-guided clustering method for single-cell transcriptomic data},
-  author={Hu, Dayu and Guan, Renxiang and Liang, Ke and Yu, Hao and Quan, Hao and Zhao, Yawei and Liu, Xinwang and He, Kunlun},
-  journal={Briefings in Bioinformatics},
-  volume={25},
-  number={6},
-  pages={bbae483},
-  year={2024},
-  publisher={Oxford University Press}
-}
+```python
+python code/run_amvf.py \
+  --data_path data/Bjorklund/Bjorklund_data.csv \
+  --label_path data/Bjorklund/label.ann \
+  --embedding_path data/Bjorklund/Bjorklund.emb \
+  --n_clusters 4 \
+  --output_path result/bjorklund_amvf_predictions.tsv
 ```
 
+Benchmark the classical baselines against AMVF on Bjorklund:
+
+```python
+python code/benchmark_bjorklund.py
 ```
+
+Additional notes:
+
+- `code/run_scEGG.py` now runs on CPU.
+- `code/Nmetrics.py` no longer depends on the external `munkres` package.
+- Method notes are in `docs/literature_review.md` and `docs/amvf_method.md`.
+
+## Standardized cell-type mappings
+
+I added `code/build_standardized_mappings.py` to standardize cell identifier to label metadata across the datasets in this workspace.
+
+It writes:
+
+- `result/standardized_celltype_mappings.tsv` for the combined table.
+- `result/standardized_celltype_mapping_summary.tsv` for dataset coverage.
+- per-dataset files under `result/standardized_mappings/`.
+
+The standardized columns are:
+
+- `dataset_id`
+- `sample_id`
+- `cell_id`
+- `cell_barcode`
+- `cell_type`
+- `label_kind`
+- `label_source`
+- `label_status`
+
+Run it with:
+
+```python
+python code/build_standardized_mappings.py
+```
+
+## Cross-dataset benchmark
+
+I added `code/benchmark_other_datasets.py` to run the same baseline family used in the Bjorklund benchmark on the other labeled datasets in `data/datasets/`.
+
+- Methods: `KMeans-PCA`, `Agglomerative-PCA`, `Spectral-kNN`, and `AMVF`.
+- Output: `result/other_dataset_benchmark.tsv`.
+- For larger datasets, the script uses a deterministic stratified subset so all baselines remain comparable and feasible.
+
+Run it with:
+
+```python
+python code/benchmark_other_datasets.py --max_cells 2000
 ```
