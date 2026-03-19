@@ -1,24 +1,4 @@
-
-# scEGG: Exogenous Gene-guided Single-Cell Deep Clustering Framework
-
-![Franework](https://github.com/DayuHuu/scEGA/blob/master/scEGG_framework.png)
-**Description:**
-
-[![Python](https://img.shields.io/badge/Python-3.7.0-blue.svg)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-1.13.1-orange.svg)](https://pytorch.org/)
-[![Journal](https://img.shields.io/badge/Briefings_in_Bioinformatics-bbae483-darkred)](https://academic.oup.com/bib)
-
-## 📖 Overview
-
-**scEGG** is a novel deep clustering framework designed specifically for single-cell transcriptomic analysis.
-
-Traditional methods often rely solely on endogenous cellular features. **scEGG** advances this by simultaneously integrating **cell features** and **exogenous gene features**. By aligning and fusing these dual sources of information during the clustering process, the model generates a more discriminative representation, leading to superior clustering performance.
-
-### Model Framework
-![scEGG Framework](scEGG_framework.png)
-
-> **Paper:** This work is published in *Briefings in Bioinformatics* (2024).
-
+## Adaptive Multi-View Fusion based clustering 
 
 ## 🛠 Requirements
 
